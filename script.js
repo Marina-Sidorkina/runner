@@ -39,6 +39,15 @@ const world = {
       }
     }
   },
+  getDistanceToFloor: function(playerX) {
+    for(index in this.floorTiles) {
+      const tile = this.floorTiles[index];
+      if(tile.x <= playerX && tile.x + tile.width >= playerX) {
+        return this.height;
+      }
+    }
+    return -1;
+  },
   tick: function() {
     this.cleanOldTiles();
     this.addFutureTiles();
@@ -62,13 +71,21 @@ const player = {
   y: 340,
   height: 20,
   width: 20,
+  tick: function() {
+    this.applyGravity();
+  },
   draw: function() {
     ctx.fillStyle = 'green';
     ctx.fillRect(player.x, player.y - player.height, this.height, this.width);
+  },
+  applyGravity: function() {
+    const platformBelow = world.getDistanceToFloor(this.x);
+    this.currentDistanceAboveGround = world.height - this.y - platformBelow;
   }
 }
 
 function tick() {
+  player.tick();
   world.tick();
   world.draw();
   player.draw();
