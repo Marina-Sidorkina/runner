@@ -43,7 +43,7 @@ const world = {
     for(index in this.floorTiles) {
       const tile = this.floorTiles[index];
       if(tile.x <= playerX && tile.x + tile.width >= playerX) {
-        return this.height;
+        return tile.height;
       }
     }
     return -1;
@@ -71,16 +71,26 @@ const player = {
   y: 340,
   height: 20,
   width: 20,
-  tick: function() {
-    this.applyGravity();
-  },
   draw: function() {
     ctx.fillStyle = 'green';
     ctx.fillRect(player.x, player.y - player.height, this.height, this.width);
   },
   applyGravity: function() {
-    const platformBelow = world.getDistanceToFloor(this.x);
+    let platformBelow = world.getDistanceToFloor(this.x);
     this.currentDistanceAboveGround = world.height - this.y - platformBelow;
+  },
+  processGravity: function() {
+    this.y += world.gravity;
+    let floorHeight = world.getDistanceToFloor(this.x);
+    let topYofPlatform = world.height - floorHeight;
+    if(this.y > topYofPlatform) {
+      console.log(this.y,topYofPlatform);
+      this.y = topYofPlatform;
+    }
+  },
+  tick: function() {
+    this.processGravity();
+    this.applyGravity();
   }
 }
 
