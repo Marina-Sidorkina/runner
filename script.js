@@ -57,9 +57,21 @@ const world = {
   }
 }
 
+const player = {
+  x: 160,
+  y: 340,
+  height: 20,
+  width: 20,
+  draw: function() {
+    ctx.fillStyle = 'green';
+    ctx.fillRect(player.x, player.y - player.height, this.height, this.width);
+  }
+}
+
 function tick() {
   world.tick();
   world.draw();
+  player.draw();
   window.setTimeout('tick()', 1000/60)
 }
 
