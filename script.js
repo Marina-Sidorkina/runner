@@ -11,6 +11,7 @@ const world = {
   height: 400,
   width: 640,
   gravity: 10,
+  highestFloor: 240,
   speed: 5,
   distanceTravelled: 0,
   floorTiles: [
@@ -18,12 +19,29 @@ const world = {
   ],
   moveFloor: function() {
     for(index in this.floorTiles) {
-      let tile = this.floorTiles[index];
+      const tile = this.floorTiles[index];
       tile.x -= this.speed;
       this.distanceTravelled += this.speed;
     }
   },
+  addFutureTiles: function() {
+    if(this.floorTiles.length >= 3) return;
+    const previousTile = this.floorTiles[this.floorTiles.length - 1];
+    const randomHeight = Math.floor(Math.random() * this.highestFloor) + 20;
+    const leftValue = (previousTile.x + previousTile.width);
+    const next = new floor(leftValue, randomHeight);
+    this.floorTiles.push(next); 
+  },
+  cleanOldTiles: function() {
+    for(index in this.floorTiles) {
+      if(this.floorTiles[index].x <= -this.floorTiles[index].width) {
+        this.floorTiles.splice(index, 1);
+      }
+    }
+  },
   tick: function() {
+    this.cleanOldTiles();
+    this.addFutureTiles();
     this.moveFloor();
   },
   draw: function() {
@@ -31,8 +49,8 @@ const world = {
     ctx.fillRect(0, 0, this.width, this.height);
 
     for(index in this.floorTiles) {
-      let tile = this.floorTiles[index];
-      let y = this.height - tile.height;
+      const tile = this.floorTiles[index];
+      const y = this.height - tile.height;
       ctx.fillStyle = 'blue';
       ctx.fillRect(tile.x, y, tile.width, tile.height);
     }
