@@ -25,7 +25,7 @@ const world = {
     }
   },
   addFutureTiles: function() {
-    if(this.floorTiles.length >= 3) return;
+    if(this.floorTiles.length >= 2) return;
     const previousTile = this.floorTiles[this.floorTiles.length - 1];
     const randomHeight = Math.floor(Math.random() * this.highestFloor) + 20;
     const leftValue = (previousTile.x + previousTile.width);
