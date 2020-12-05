@@ -14,9 +14,13 @@ const world = {
   highestFloor: 240,
   speed: 5,
   distanceTravelled: 0,
+  autoScroll: true,
   floorTiles: [
     new floor(0, 140)
   ],
+  stop: function() {
+    this.autoScroll = false;
+  },
   moveFloor: function() {
     for(index in this.floorTiles) {
       const tile = this.floorTiles[index];
@@ -49,6 +53,9 @@ const world = {
     return -1;
   },
   tick: function() {
+    if(!this.autoScroll) {
+      return;
+    }
     this.cleanOldTiles();
     this.addFutureTiles();
     this.moveFloor();
@@ -71,13 +78,20 @@ const player = {
   y: 340,
   height: 20,
   width: 20,
+  getDistanceFor: function(x) {
+    const platformBelow = world.getDistanceToFloor(x);
+    return world.height - this.y - platformBelow;
+  },
   draw: function() {
     ctx.fillStyle = 'green';
     ctx.fillRect(player.x, player.y - player.height, this.height, this.width);
   },
   applyGravity: function() {
-    let platformBelow = world.getDistanceToFloor(this.x);
-    this.currentDistanceAboveGround = world.height - this.y - platformBelow;
+    this.currentDistanceAboveGround = this.getDistanceFor(this.x);
+    const rightHandSideDistance = this.getDistanceFor(this.x + this.width);
+    if(this.currentDistanceAboveGround < 0 || rightHandSideDistance < 0) {
+      world.stop();
+    }
   },
   processGravity: function() {
     this.y += world.gravity;
