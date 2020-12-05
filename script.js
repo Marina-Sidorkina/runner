@@ -98,7 +98,6 @@ const player = {
     let floorHeight = world.getDistanceToFloor(this.x);
     let topYofPlatform = world.height - floorHeight;
     if(this.y > topYofPlatform) {
-      console.log(this.y,topYofPlatform);
       this.y = topYofPlatform;
     }
   },
