@@ -32,8 +32,10 @@ const world = {
   },
   addFutureTiles: function() {
     if(this.floorTiles.length >= 2) return;
+
     const previousTile = this.floorTiles[this.floorTiles.length - 1];
     let biggestJumpableHeight = previousTile.height + player.height * 3.5;
+
     if(biggestJumpableHeight > this.highestFloor) {
       biggestJumpableHeight = this.highestFloor;
     }
@@ -66,6 +68,7 @@ const world = {
     if(!this.autoScroll) {
       return;
     }
+
     this.cleanOldTiles();
     this.addFutureTiles();
     this.moveFloor();
@@ -106,6 +109,7 @@ const player = {
   applyGravity: function() {
     this.currentDistanceAboveGround = this.getDistanceFor(this.x);
     const rightHandSideDistance = this.getDistanceFor(this.x + this.width);
+
     if(this.currentDistanceAboveGround < 0 || rightHandSideDistance < 0) {
       world.stop();
     }
@@ -114,11 +118,14 @@ const player = {
     this.y += this.downwardForce;
     let floorHeight = world.getDistanceToFloor(this.x);
     let topYofPlatform = world.height - floorHeight;
+
     if(this.y > topYofPlatform) {
       this.y = topYofPlatform;
     }
+
     if(this.downwardForce < 0) {
       this.jumpHeight += (this.downwardForce * -1);
+
       if(this.jumpHeight >= player.height * 6) {
         this.downwardForce = world.gravity;
         this.jumpHeight = 0;
@@ -128,6 +135,7 @@ const player = {
   keyPress: function() {
     const floorHeight = world.getDistanceToFloor(this.x + this.width);
     const onTheFloor = floorHeight === (world.height - this.y);
+
     if(onTheFloor) {
       this.downwardForce = -8;
     }
