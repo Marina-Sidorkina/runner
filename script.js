@@ -78,6 +78,8 @@ const player = {
   y: 340,
   height: 20,
   width: 20,
+  downwardForce: world.gravity,
+  jumpHeight: 0,
   getDistanceFor: function(x) {
     const platformBelow = world.getDistanceToFloor(x);
     return world.height - this.y - platformBelow;
@@ -94,11 +96,25 @@ const player = {
     }
   },
   processGravity: function() {
-    this.y += world.gravity;
+    this.y += this.downwardForce;
     let floorHeight = world.getDistanceToFloor(this.x);
     let topYofPlatform = world.height - floorHeight;
     if(this.y > topYofPlatform) {
       this.y = topYofPlatform;
+    }
+    if(this.downwardForce < 0) {
+      this.jumpHeight += (this.downwardForce * -1);
+      if(this.jumpHeight >= player.height * 6) {
+        this.downwardForce = world.gravity;
+        this.jumpHeight = 0;
+      }
+    }
+  },
+  keyPress: function() {
+    const floorHeight = world.getDistanceToFloor(this.x + this.width);
+    const onTheFloor = floorHeight === (world.height - this.y);
+    if(onTheFloor) {
+      this.downwardForce = -8;
     }
   },
   tick: function() {
@@ -106,6 +122,10 @@ const player = {
     this.applyGravity();
   }
 }
+
+window.addEventListener('keypress', function(keyInfo) {
+  player.keyPress(keyInfo);
+}, false);
 
 function tick() {
   player.tick();
