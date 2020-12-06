@@ -15,6 +15,8 @@ const world = {
   speed: 5,
   distanceTravelled: 0,
   autoScroll: true,
+  maxSpeed: 15,
+  tilesPassed: 0,
   floorTiles: [
     new floor(0, 140)
   ],
@@ -31,7 +33,7 @@ const world = {
   addFutureTiles: function() {
     if(this.floorTiles.length >= 2) return;
     const previousTile = this.floorTiles[this.floorTiles.length - 1];
-    const biggestJumpableHeight = previousTile.height + player.height * 3.5;
+    let biggestJumpableHeight = previousTile.height + player.height * 3.5;
     if(biggestJumpableHeight > this.highestFloor) {
       biggestJumpableHeight = this.highestFloor;
     }
@@ -44,6 +46,10 @@ const world = {
     for(index in this.floorTiles) {
       if(this.floorTiles[index].x <= -this.floorTiles[index].width) {
         this.floorTiles.splice(index, 1);
+        this.tilesPassed++;
+        if(this.tilesPassed % 3 === 0 && this.speed < this.maxSpeed) {
+          this.speed++;
+        }
       }
     }
   },
@@ -74,6 +80,11 @@ const world = {
       ctx.fillStyle = 'blue';
       ctx.fillRect(tile.x, y, tile.width, tile.height);
     }
+
+    ctx.fillStyle = 'white';
+    ctx.font = '28px Arial';
+    ctx.fillText('Скорость: ' + this.speed, 20, 40);
+    ctx.fillText('Пройдено: ' + this.distanceTravelled, 10, 75);
   }
 }
 
